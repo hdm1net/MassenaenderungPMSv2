@@ -1,0 +1,320 @@
+﻿<Window x:Class="MassenaenderungPMSv2Gui.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:MassenaenderungPMSv2Gui.ViewModels"
+        Icon="pack://application:,,,/Content/icon.ico"
+        Title="Massendatenänderung OSPlus (Gui)" Width="1024" Height="825">
+    
+    <StackPanel>
+        <!-- Anwendungsheader -->
+        <Grid x:Name="GridHeader" Margin="0,0,0,0">
+            <Grid.Background>
+                <SolidColorBrush Color="DarkGray"/>
+            </Grid.Background>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="75"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Label Content="Massendatenänderung OSPlus (Gui)" Grid.Row="0" Grid.Column="0" Margin="20,15,20,15" VerticalAlignment="Center" FontSize="24" Foreground="White"/>
+        </Grid>
+
+        <!-- TabControl (Reiter) Importspezifikation oder Massenänderung-->
+        <TabControl x:Name="TabControlMain" Margin="20,20,20,20" Padding="10,10,10,10" FontSize="16">
+        
+            <TabItem Header="Importspezifikation erstellen" x:Name="TabImportspezifikation" Padding="20,10,20,10">
+            
+                <StackPanel>
+                    
+                    <TextBlock TextWrapping="WrapWithOverflow" FontSize="14" Padding="10,10,0,10">
+                        Erstellen einer Importspezifikation (XML-Datei) zur Steuerung der Massenänderung im OSPlus. In der Datei werden Informationen zur Steuerung der Massenänderung, 
+                        wie z.B. der zu nutzende Prozess, die Definition der Eingabeparameter, Eingabedatei (csv) mit den Daten und Logfiles, festgelegt. 
+                        Die Datei mit der hier erstellten Importspezifikation dient dann als Steuerungsdatei für die Durchführung der Massenänderung im OSPlus.
+                    </TextBlock>
+                    
+                    <TabControl x:Name="TabControlImportspezifikation" Margin="10,10,10,10" Padding="10,10,10,10" FontSize="14">
+
+                        <TabItem Header="Prozess auswählen" x:Name="TabImportspezifikationProzess" Padding="10,5,10,5">
+                            
+                            <Grid x:Name="GridTabImportspezifikationProzess" Margin="0,10,0,10">
+
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" MinWidth="190"/>
+                                    <ColumnDefinition Width="*" MinWidth="450"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Label Tab Prozess auswaehlen -->
+                                <Label Content="Importdatei:" x:Name="lblImportdatei" Grid.Row="0" Grid.Column="0" Margin="2" FontSize="13" FontWeight="Bold"/>
+                                <Label Content="Spaltentrennzeichen:" x:Name="lblTrennzeichen" Grid.Row="1" Grid.Column="0" Margin="2" FontSize="13" FontWeight="Bold"/>
+                                <Label Content="Textqualifizierer:" x:Name="lblTextqualifizierer" Grid.Row="2" Grid.Column="0" Margin="2" FontSize="13" FontWeight="Bold"/>
+                                <Label Content="Prozess:" x:Name="lblProzess" Grid.Row="3" Grid.Column="0" Margin="2" FontSize="13" FontWeight="Bold"/>
+                                <Label Content="Aufrufvar./Service-Op.:" x:Name="lblAufrufvariante_or_Serviceoperation" Grid.Row="4" Grid.Column="0" Margin="2" FontSize="13" FontWeight="Bold"/>
+                                <Label Content="Schnittstellenart:" x:Name="lblSchnittstellenart" Grid.Row="5" Grid.Column="0" Margin="2" FontSize="13" FontWeight="Bold"/>
+                                <Label Content="Prozessbeschreibung:" x:Name="lblProzessbeschreibung" Grid.Row="6" Grid.Column="0" Margin="2" FontSize="13" FontWeight="Bold"/>
+
+                                <!-- Eingabefelder Tab Prozess auswaehlen -->
+                                <TextBox x:Name="txtImportdatei" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Margin="2" FontSize="13" TextWrapping="Wrap" Text="{Binding Importdatei}" />
+                                <Button x:Name="btnImportdatei" Content="..." Grid.Row="0" Grid.Column="2" Padding="5,0,5,0" Margin="2" FontSize="16"  HorizontalAlignment="Right" ToolTip="Datendatei (.csv) auswählen" Command="{Binding SelectFileCommand}" />
+                                <TextBox x:Name="txtTrennzeichen" Grid.Row="1" Grid.Column="1" Margin="2" FontSize="13" TextWrapping="Wrap" Width="50" HorizontalAlignment="Left" Text="{Binding Trennzeichen,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"  />
+                                <TextBox x:Name="txtTextqualifizierer" Grid.Row="2" Grid.Column="1" Margin="2" FontSize="13" TextWrapping="Wrap" Width="50" HorizontalAlignment="Left" Text="{Binding Textqualifizierer,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}" />
+                                <ComboBox Style="{DynamicResource AppComboBoxStyleDefault}" x:Name="ddlProzess" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Margin="2" FontSize="13"  ItemsSource="{Binding DynsProzesse}" DisplayMemberPath="ProcessName" SelectedItem="{Binding SelectedProzess,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}" />
+                                <ComboBox Style="{DynamicResource AppComboBoxStyleDefault}" x:Name="ddlAufrufvariante_or_Serviceoperation" Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Margin="2" FontSize="13" ItemsSource="{Binding DynsProzessAufrufvarianten}" DisplayMemberPath="Beschreibung" SelectedItem="{Binding SelectedDynsProzessAufrufvariante,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"/>
+                                <ComboBox Style="{DynamicResource AppComboBoxStyleDefault}" x:Name="ddlSchnittstellenart" Grid.Row="5" Grid.Column="1" Margin="2" FontSize="13" Width="200" HorizontalAlignment="Left" ItemsSource="{Binding DynsSchnittstellenarten}" DisplayMemberPath="Beschreibung" SelectedItem="{Binding SelectedDynsSchnittstellenart,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"/>
+                                <ScrollViewer Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="3" Margin="2,10,2,10" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Height="175">
+                                    <TextBlock x:Name="txtProzessbeschreibung" FontSize="11" TextWrapping="WrapWithOverflow" Text="{Binding DynsProzessFachlicheBeschreibung}" />
+                                </ScrollViewer>
+
+                            </Grid>
+                            
+                        </TabItem>
+
+                        <TabItem Header="Eingabeparameter zuordnen" x:Name="TabImportspezifikationEingabeparameter" Padding="10,5,10,5">
+
+                            <!-- Definition eines Eingabeparameters -->
+                            <Grid x:Name="GridTabImportspezifikationParameter" Margin="0,10,0,10">
+                                
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="60"/>
+                                    <ColumnDefinition Width="60"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Label Content="Eingabeparameter" x:Name="lblEingabeparameterName" Grid.Row="0" Grid.Column="0" Margin="2" FontSize="12" FontWeight="Bold" ToolTip="Name des Eingabeparameters des DynS-Prozesses"/>
+                                <Label Content="Eingabe-Fachobjekt (OO)" x:Name="lblEingabeparameterFO" Grid.Row="0" Grid.Column="1" Margin="2" FontSize="12" FontWeight="Bold" ToolTip="Ggf. erforderliches Eingabe-Fachobjekt bei objektorientieren DynS-Prozessen"/>
+                                <Label Content="Lfdn" x:Name="lblEingabeparameterLfdn" Grid.Row="0" Grid.Column="2" Margin="2" FontSize="12" FontWeight="Bold" ToolTip="Eingabekartinalität bei mehrzeiligen Eingabeparametern"/>
+                                <Label Content="Array" x:Name="lblEingabeparameterArray" Grid.Row="0" Grid.Column="3" Margin="2" FontSize="12" FontWeight="Bold" HorizontalAlignment="Center" ToolTip="Definition, ob es sich um ein Eingabeparameterarray handelt(1...x)"/>
+                                <Label Content="Datenspalte" x:Name="lblEingabeparameterSpalte" Grid.Row="0" Grid.Column="4" Margin="2" FontSize="12" FontWeight="Bold" ToolTip="Spalte in der die Daten für den Eingabeparameter in der Datendatei liegen"/>
+                                <Label Content="Beschreibung" x:Name="lblEingabeparameterBeschreibung" Grid.Row="0" Grid.Column="5" Margin="2" FontSize="12" FontWeight="Bold"/>
+
+                                <ComboBox Style="{DynamicResource AppComboBoxStyleDefault}" x:Name="ddlEingabeparameterName" Grid.Row="1" Grid.Column="0" Margin="2" FontSize="12" ItemsSource="{Binding DynsAufrufvariantenParameter}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedDynsAufrufvariantenParameter,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"/>
+                                <TextBox x:Name="txtEingabeparameterFO" Grid.Row="1" Grid.Column="1" Margin="2" FontSize="12" Text="{Binding DynsEingabeparameterFo,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"/>
+                                <TextBox x:Name="txtEingabeparameterLfdn" Grid.Row="1" Grid.Column="2" Margin="2" FontSize="12" Text="{Binding DynsEingabeparameterLfdn,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"/>
+                                <CheckBox x:Name="chkEingabeparameterArray" Grid.Row="1" Grid.Column="3" Margin="2" HorizontalAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding DynsEingabeparameterArray,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"/>
+                                <ComboBox Style="{DynamicResource AppComboBoxStyleDefault}" x:Name="ddlEingabeparameterSpalten" Grid.Row="1" Grid.Column="4" Margin="2" FontSize="12" ItemsSource="{Binding EingabeparameterSpalten}" DisplayMemberPath="ColumnName" SelectedItem="{Binding SelectedEingabeparameterSpalte,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"/>
+                                <TextBlock x:Name="txtEingabeparameterBeschreibung" Grid.Row="1" Grid.Column="5" Margin="5,5,5,2" FontSize="9" TextWrapping="WrapWithOverflow" Text="{Binding DynsEingabeparameterBeschreibung}"/>
+
+                                <!-- Button Eingabeparameter zur Parameterauswahl hinzufuegen -->
+                                <Button x:Name="btnEingabeparameterHinzufuegen" 
+                                        Content="Eingabeparameter hinzufügen" 
+                                        Grid.Row="2" 
+                                        Grid.Column="1" 
+                                        Grid.ColumnSpan="4" 
+                                        Margin="10" 
+                                        Padding="5" 
+                                        FontSize="14"
+                                        Command="{Binding AddEingabeparameterCommand}"/>
+
+
+                                <ScrollViewer Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="9" Margin="30,10,30,10" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Height="200">
+                                    <!-- DataGrid mit den Eingabeparametern fuer die XML-Datei Importspezifikation -->
+                                    <DataGrid x:Name="DataGridEingabeparameter" 
+                                              Margin="5,20,5,5" 
+                                              FontSize="13" 
+                                              HeadersVisibility="Column"
+                                              ItemsSource="{Binding ImpSpezEingabeparameterCollection}"
+                                              SelectedItem="{Binding SelectedImpSpezEingabeparameter}"
+                                              AutoGenerateColumns="False">
+
+                                        <DataGrid.ColumnHeaderStyle>
+                                            <Style TargetType="{x:Type DataGridColumnHeader}">
+                                                <Setter Property="FontWeight" Value="Bold" />
+                                            </Style>
+                                        </DataGrid.ColumnHeaderStyle>
+
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="Eingabeparameter" Binding="{Binding Name}"/>
+                                            <DataGridTextColumn Header="Eingabe-Fo" Binding="{Binding EingabeFo}"/>
+                                            <DataGridTextColumn Header="Lfdn" Binding="{Binding Lfdn}"/>
+                                            <DataGridTextColumn Header="Array" Binding="{Binding IsArray}"/>
+                                            <DataGridTextColumn Header="Datenspalte" Binding="{Binding Datenspaltenname}"/>
+                                            <!-- Löschbutton -->
+                                            <DataGridTemplateColumn Header="Löschen">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <Button Margin="5,0,5,0" Width="25" Content="X" Command="{Binding DataContext.RemoveEingabeparameterCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" CommandParameter="{Binding}" />
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
+                                        </DataGrid.Columns>
+
+                                    </DataGrid>
+
+                                </ScrollViewer>
+
+                               
+                                <!-- Meldung wenn leer -->
+                                <TextBlock Text="Noch keine Eingabeparameter vorhanden. Bitte fügen Sie welche hinzu."
+                                    Grid.Row="3" 
+                                    Grid.Column="0" 
+                                    Grid.ColumnSpan="9"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Top"
+                                    Margin="40,65,40,5"
+                                    FontSize="13"
+                                    FontStyle="Italic"
+                                    Foreground="Gray">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding ImpSpezEingabeparameterCollection.Count}" Value="0">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+
+                                <!-- Button Importspezifikation erstellen -->
+                                <Button x:Name="btnImportspezifikationErstellen" 
+                                        Content="Importspezifikation erstellen" 
+                                        Grid.Row="4" 
+                                        Grid.Column="1" 
+                                        Grid.ColumnSpan="4" 
+                                        Margin="10" 
+                                        Padding="5" 
+                                        FontSize="14"
+                                        Command="{Binding CreateImportspezifikationCommand }">
+                                    <Button.Style>
+                                        <Style TargetType="Button">
+                                            <Setter Property="IsEnabled"  Value="True"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding EnablebtnImportspezifikationErstellen}" Value="false">
+                                                    <Setter Property="IsEnabled" Value="False"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+
+                            </Grid>
+                            
+                        </TabItem>
+
+                    </TabControl>
+                    
+                </StackPanel>
+            
+            </TabItem>
+
+            <TabItem Header="Massenänderung durchführen" x:Name="TabMassenaenderung" Padding="20,10,20,10">
+                
+                <StackPanel>
+
+                    <TextBlock TextWrapping="WrapWithOverflow" FontSize="14" Padding="10,10,0,10">
+                        Durchführung einer Massenänderung im OSPlus auf Basis einer zuvor erstellten Importspezifikation (XML-Datei). 
+                        Hierbei wird die Steuerungsdatei ausgewählt, die die Informationen zur Durchführung der Massenänderung enthält und die Massenänderung im OSPlus gestartet. 
+                        Nach Abschluss der Massenänderung können die Logfiles eingesehen werden, um den Erfolg der Massenänderung zu überprüfen.
+                    </TextBlock>
+
+                    <TabControl x:Name="TabControlMassenaenderung" Margin="10,10,10,10" Padding="10,10,10,10" FontSize="14">
+
+                        <TabItem Header="Massenänderung durchführen" x:Name="TabMassenaenderungDurchfuehren" Padding="10,5,10,5">
+                            
+                            <Grid x:Name="GridTabMassenaenderungDurchfuehren" Margin="0,10,0,10">
+
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" MinWidth="190"/>
+                                    <ColumnDefinition Width="*" MinWidth="450"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Labels Tab Massenaenderung -->
+                                <Label Content="Importspezifikation:" x:Name="lblMADImpSpezXml" Grid.Row="0" Grid.Column="0" Margin="2" FontSize="13" FontWeight="Bold"/>
+
+                                <!-- Eingabefelder Tab Prozess auswaehlen -->
+                                <TextBox x:Name="txtMADImpSpezXml" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Margin="2" FontSize="13" TextWrapping="Wrap" Text="{Binding MADImpSpezXml}" />
+                                <Button x:Name="btnMADImpSpezXml" Content="..." Grid.Row="0" Grid.Column="2" Padding="5,0,5,0" Margin="2" FontSize="16"  HorizontalAlignment="Right" ToolTip="Importspezifikation (.xml) auswählen" Command="{Binding SelectMADImpSpezXmlCommand}" />
+
+                                <CheckBox x:Name="chkMADTestRun" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Margin="5,0,5,10" HorizontalAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding MADTestRun,Mode=TwoWay}">Massenänderung als Test mit nur einem Datensatz ausführen</CheckBox>
+
+                                <!-- Button Massenaenderung durchfuehren -->
+                                <Button x:Name="btnStartMassenaenderung" 
+                                        Content="Massenänderung starten" 
+                                        Grid.Row="1" 
+                                        Grid.Column="1" 
+                                        Grid.ColumnSpan="2" 
+                                        Margin="10" 
+                                        Padding="5" 
+                                        FontSize="14"
+                                        Command="{Binding StartMassenaenderungCommand }">
+                                    <Button.Style>
+                                        <Style TargetType="Button">
+                                            <Setter Property="IsEnabled"  Value="True"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding EnablebtnStartMassenaenderung}" Value="false">
+                                                    <Setter Property="IsEnabled" Value="False"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+
+                                <ScrollViewer Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="9" Margin="2,10,2,10" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Height="250">
+                                    <TextBlock x:Name="txtMADOutput" FontSize="11" TextWrapping="WrapWithOverflow" Text="{Binding MADOutput}" />
+                                </ScrollViewer>
+
+                            </Grid>
+
+                        </TabItem>
+
+                    </TabControl>
+
+                </StackPanel>
+                
+            </TabItem>
+           
+        </TabControl>
+
+
+        <!-- Statuszeile am unteren Ende -->
+        <TextBlock Text="{Binding StatusMessage}" 
+                   TextWrapping="WrapWithOverflow"
+                   FontStyle="Italic"
+                   FontSize="16"
+                   Foreground="DarkGray" 
+                   HorizontalAlignment="Center"/>
+        
+    </StackPanel>
+
+   
+
+
+
+</Window>

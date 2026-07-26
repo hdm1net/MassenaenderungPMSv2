@@ -1,0 +1,18 @@
+{
+  "profiles": {
+    "WSL": {
+      "commandName": "WSL2",
+      "distributionName": ""
+    },
+    "MassenaenderungPMSv2PO": {
+      "commandName": "Project",
+      "commandLineArgs": "-enc \"test\"",
+      "nativeDebugging": false
+    },
+    "MassenaenderungPMSv2OO": {
+      "commandName": "Project",
+      "commandLineArgs": "--impspez \"C:\\Temp\\PMSv2\\ZUSTIMMUNG_Z_VEREINB_LOESCH.xml\" --test",
+      "nativeDebugging": false
+    }
+  }
+}
