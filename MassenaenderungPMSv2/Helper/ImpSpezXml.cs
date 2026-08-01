@@ -1,7 +1,8 @@
 ﻿using MassenaenderungPMSv2.ImpSpezXMLClasses;
+using System.IO;
 using System.Text;
+using System.Xml;
 using System.Xml.Serialization;
-
 
 namespace MassenaenderungPMSv2.Helper.ImpSpezXml
 {
@@ -21,6 +22,7 @@ namespace MassenaenderungPMSv2.Helper.ImpSpezXml
             return GetImpSpezUebersichtAsync(ImpSpezXmlFilePath).Result;
 
         }
+
 
         /// <summary>
         /// Deserialisiert die XML-Datei zur Importspezifikation und gibt diese als Uebersichtklasse zurueck
@@ -65,6 +67,79 @@ namespace MassenaenderungPMSv2.Helper.ImpSpezXml
             catch (Exception e)
             {
                 throw new InvalidOperationException("Error GetImpSpezUebersichtAsync()", e);
+            }
+        }
+
+        /// <summary>
+        /// Serialisiert ein <c>ImpSpezXMLClasses.Uebersicht</c>-Objekt in eine XML Datei.
+        /// Das Ergebnis verwendet ISO 8859 1 und setzt Attribut Quotes auf einfache Anführungszeichen (').
+        /// </summary>
+        /// <param name="Uebersicht">Das zu serialisierende Objekt.</param>
+        /// <param name="ImpSpezXmlFilePath">Zielpfad inkl. Dateiname.</param>
+        internal static void WriteImpSpezUebersicht(ImpSpezXMLClasses.Uebersicht Uebersicht, string ImpSpezXmlFilePath)
+        {
+
+            WritetImpSpezUebersichtAsync(Uebersicht, ImpSpezXmlFilePath).Wait();
+
+        }
+
+        /// <summary>
+        /// Serialisiert ein <c>ImpSpezXMLClasses.Uebersicht</c>-Objekt in eine XML Datei.
+        /// Das Ergebnis verwendet ISO 8859 1 und setzt Attribut Quotes auf einfache Anführungszeichen (').
+        /// </summary>
+        /// <param name="Uebersicht">Das zu serialisierende Objekt.</param>
+        /// <param name="ImpSpezXmlFilePath">Zielpfad inkl. Dateiname.</param>
+        internal static async Task WritetImpSpezUebersichtAsync(ImpSpezXMLClasses.Uebersicht Uebersicht, string ImpSpezFileName)
+        {
+
+            if (String.IsNullOrEmpty(ImpSpezFileName)
+                || Uebersicht?.Importspezifikation?.Prozess?.EingabeParameterCollection?.Eingabeparameter == null) { return; }
+
+            try
+            {
+                var targetEncoding = Encoding.GetEncoding("iso-8859-1");
+
+                var xmlSerializer = new XmlSerializer(typeof(ImpSpezXMLClasses.Uebersicht));
+
+                var settings = new System.Xml.XmlWriterSettings
+                {
+                    Encoding = targetEncoding,
+                    Indent = true,
+                    NewLineOnAttributes = false,
+                    OmitXmlDeclaration = false
+                };
+
+                var namespaces = new XmlSerializerNamespaces();
+                namespaces.Add(string.Empty, string.Empty);
+
+                string xmlString;
+                using (var ms = new MemoryStream())
+                {
+                    
+                    using (var writer = XmlWriter.Create(ms, settings))
+                    {
+                        writer.WriteStartDocument(true);
+                        xmlSerializer.Serialize(writer, Uebersicht, namespaces);
+                        writer.Flush();
+                    }
+                    
+                    xmlString = targetEncoding.GetString(ms.ToArray());
+
+                }
+
+               // Doppelte Anführungszeichen bei Attributen durch einfache ersetzen
+                //string xmlWithSingleQuotes = System.Text.RegularExpressions.Regex.Replace(xmlString, "(\\s\\w+)=\\\"([^\"]*)\\\"", "$1='$2'");
+                string xmlWithSingleQuotes = System.Text.RegularExpressions.Regex.Replace(xmlString, @"""", "'");
+                // Falls &quote in den Attributen vorkommt, wieder in " umwandeln
+                xmlWithSingleQuotes = xmlWithSingleQuotes.Replace("&quot;", "\"");
+
+                // Ergebnis in die Datei schreiben (ISO 8859 1)
+                await File.WriteAllTextAsync(ImpSpezFileName, xmlWithSingleQuotes, targetEncoding);
+
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Error WritetImpSpezUebersichtAsync()", ex);
             }
         }
 

@@ -6,7 +6,7 @@
     },
     "MassenaenderungPMSv2PO": {
       "commandName": "Project",
-      "commandLineArgs": "-enc \"test\"",
+      "commandLineArgs": "-i \"P:\\Ablage\\Visual Studio Projects\\MassenaenderungPMSv2\\MassenaenderungPMSv2\\ImpSpezXml\\ANSCHRIFT_ANLEGEN.xml\"",
       "nativeDebugging": false
     },
     "MassenaenderungPMSv2OO": {
