@@ -307,7 +307,7 @@ namespace MassenaenderungPMSv2.Helper.ImpSpezXml
 
                 foreach (var eingabeparameter in Uebersicht.Importspezifikation?.Prozess?.EingabeParameterCollection?.Eingabeparameter ?? Enumerable.Empty<ImpSpezXMLClasses.Eingabeparameter>())
                 {
-                    xmlFileImpSpez += String.Format("    <Eingabeparameter Name=\"{0}\" eingabe_fo=\"{1}\" lfdn=\"{2}\" isarray=\"{3}\">", eingabeparameter.Name, eingabeparameter.EingabeFo, eingabeparameter.Lfdn, eingabeparameter.IsArray) + eingabeparameter.Datenspaltenname + "</Eingabeparameter>" + System.Environment.NewLine;
+                    xmlFileImpSpez += String.Format("    <Eingabeparameter name=\"{0}\" eingabe-fo=\"{1}\" lfdn=\"{2}\" isarray=\"{3}\">", eingabeparameter.Name, eingabeparameter.EingabeFo, eingabeparameter.Lfdn, eingabeparameter.IsArray) + eingabeparameter.Datenspaltenname + "</Eingabeparameter>" + System.Environment.NewLine;
                 }
 
                 xmlFileImpSpez += "   </EingabeParameterCollection>" + System.Environment.NewLine;
